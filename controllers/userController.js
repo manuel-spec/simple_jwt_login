@@ -2,6 +2,8 @@ const { User } = require('../models/User')
 const { validationResult } = require('express-validator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const { auth } = require('../controllers/middlewares/auth')
+
 require('dotenv').config()
 
 const expiresAt = 3 * 60 * 60 * 24
@@ -10,11 +12,19 @@ const createToken = (id) => {
     return jwt.sign({ id }, process.env.COOKIE_SECRET, { expiresIn: expiresAt })
 }
 
-const login = (request, response) => {
+const login = async (request, response) => {
+    const isAuthed = await auth(request, response)
+    if (isAuthed) {
+        response.redirect('/')
+    }
     return response.render('auth/login', { title: "welcome back", errors: [] })
 }
 
-const signup = (request, response) => {
+const signup = async (request, response) => {
+    const isAuthed = await auth(request, response)
+    if (isAuthed) {
+        response.redirect('/')
+    }
     return response.render('auth/signup', { title: "welcome to", errors: [] })
 }
 
