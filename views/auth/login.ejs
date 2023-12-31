@@ -1,0 +1,28 @@
+<%- include('partials/head') %>
+    <div class="grid grid-cols-3 gap-5">
+        <div class="flex w-64"></div>
+        <div class="flex w-64">
+            
+            <form action="" method="post" class="flex flex-col border p-9 m-4">
+                <h1 class="text-4xl text-center mb-4">Login</h1>
+                <div class="">
+                    <label for="">Email:</label>
+                    <input type="text" placeholder="email" class="border py-2 px-9 text-center" name="email">
+                </div>
+                <div class="">
+                    <label for="">Password</label>
+                    <input type="password" placeholder="********" class="border py-2 px-9 text-center" name="password">
+                </div>
+                <div>
+                    <button class="border p-2 mt-4">Login</button>
+                </div>
+                <div class="mt-4">
+                    <span>new accout ?</span>
+                    <a href="/users/signup" class="ml-4">signup</a>
+                </div>
+                
+            </form>
+        </div>
+        <div class="flex"></div>
+    </div>
+<%- include('partials/foot') %>
