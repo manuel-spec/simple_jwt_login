@@ -8,7 +8,10 @@ const { body } = require('express-validator')
 router.get('/login', userController.login);
 router.get('/signup', userController.signup);
 
-router.post('/login', userController.loginPost);
+router.post('/login',
+  body('email').isEmail().withMessage('valid email is required !'),
+  body('password').notEmpty().withMessage('password is required !'),
+  userController.loginPost);
 
 router.post('/signup',
   body('email').isEmail().withMessage('valid email is required !'),
