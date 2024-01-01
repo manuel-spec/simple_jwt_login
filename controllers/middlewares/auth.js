@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const User = require('../../models/User')
+const { User } = require('../../models/User')
 require('dotenv').config()
 
 const verifyCookie = (req, res, next) => {
@@ -17,18 +17,24 @@ const verifyCookie = (req, res, next) => {
     }
 }
 
-const auth = async (req, res) => {
+const auth = (req, res, next) => {
     const token = req.cookies.jwt;
 
     if (token) {
-        try {
-            const decodedToken = await jwt.verify(token, process.env.COOKIE_SECRET);
-            return true;
-        } catch (error) {
-            return false;  // Token verification failed
-        }
+        jwt.verify(token, process.env.COOKIE_SECRET, (async (error, decodedToken) => {
+            if (error) {
+                console.log(error)
+                res.locals.user = null
+                next()
+            } else {
+                const user = await User.findById(decodedToken.id)
+                res.locals.user = user
+                next()
+            }
+        }))
     } else {
-        return false;  // No token provided
+        res.locals.user = null
+        next()
     }
 };
 

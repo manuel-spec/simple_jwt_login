@@ -7,7 +7,8 @@ const mongoose = require('mongoose')
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const { Result } = require('express-validator');
+
+const { auth } = require('./controllers/middlewares/auth');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use(function (req, res, next) {
   next(createError(404));
 });
 
+app.get('*', auth)
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development

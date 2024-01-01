@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { auth } = require('../controllers/middlewares/auth')
+const { response } = require('express')
 
 require('dotenv').config()
 
@@ -13,18 +14,11 @@ const createToken = (id) => {
 }
 
 const login = async (request, response) => {
-    const isAuthed = await auth(request, response)
-    if (isAuthed) {
-        response.redirect('/')
-    }
-    return response.render('auth/login', { title: "welcome back", errors: [] })
+    return response.render('auth/login', { title: "welcome back", errors: [], loginError: "" })
 }
 
 const signup = async (request, response) => {
-    const isAuthed = await auth(request, response)
-    if (isAuthed) {
-        response.redirect('/')
-    }
+
     return response.render('auth/signup', { title: "welcome to", errors: [] })
 }
 
@@ -63,15 +57,22 @@ const loginPost = async (request, response) => {
                 const token = createToken(user._id)
                 response.cookie('jwt', token, { maxAge: expiresAt * 1000 })
                 return response.redirect('/')
+            } else {
+                return response.render('auth/login', { title: 'welcome back', errors: [], loginError: "incorrect password" })
             }
         }
-        return response.redirect('/users/login')
+        return response.render('auth/login', { title: 'welcome back', errors: result['errors'], loginError: "incorrect email or password" })
     } else {
-        return response.render('auth/login', { title: 'welcome back', errors: result['errors'] })
+        return response.render('auth/login', { title: 'welcome back', errors: result['errors'], loginError: "" })
     }
+}
+
+const logout = (request, response) => {
+    response.cookie('jwt', '', { maxAge: 1 })
+    return response.redirect('/users/login')
 }
 
 
 module.exports = {
-    login, signup, loginPost, signupPost
+    login, signup, loginPost, signupPost, logout
 }
